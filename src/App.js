@@ -2,7 +2,6 @@
 import React, { useState, Fragment } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
-
 // import AuthenticatedRoute from './components/shared/AuthenticatedRoute'
 import AutoDismissAlert from './components/shared/AutoDismissAlert/AutoDismissAlert'
 import Header from './components/shared/Header'
@@ -12,36 +11,30 @@ import SignUp from './components/auth/SignUp'
 import SignIn from './components/auth/SignIn'
 import SignOut from './components/auth/SignOut'
 import ChangePassword from './components/auth/ChangePassword'
-import ShowPet from './components/pets/ShowPet.js'
-import PetForm from './components/shared/PetForm'
-
+import ShowPet from './components/pets/ShowPet'
+import CreatePet from './components/pets/CreatePet'
 const App = () => {
-
-	const [user, setUser] = useState(null)
-	const [msgAlerts, setMsgAlerts] = useState([])
-
-	console.log('user in app', user)
-	console.log('message alerts', msgAlerts)
-	const clearUser = () => {
-		console.log('clear user ran')
-		setUser(null)
-	}
-
+  const [user, setUser] = useState(null)
+  const [msgAlerts, setMsgAlerts] = useState([])
+  console.log('user in app', user)
+  console.log('message alerts', msgAlerts)
+  const clearUser = () => {
+    console.log('clear user ran')
+    setUser(null)
+  }
 	const deleteAlert = (id) => {
 		setMsgAlerts((prevState) => {
-			return (prevState.filter((msg) => msg.id !== id))
+			return (prevState.filter((msg) => msg.id !== id) )
 		})
 	}
-
 	const msgAlert = ({ heading, message, variant }) => {
 		const id = uuid()
 		setMsgAlerts(() => {
 			return (
 				[{ heading, message, variant, id }]
-			)
+      )
 		})
 	}
-
 	return (
 		<Fragment>
 			<Header user={user} />
@@ -58,25 +51,30 @@ const App = () => {
 				<Route
 					path='/sign-out'
 					element={
-						<RequireAuth user={user}>
-							<SignOut msgAlert={msgAlert} clearUser={clearUser} user={user} />
-						</RequireAuth>
+					<RequireAuth user={user}>
+						<SignOut msgAlert={msgAlert} clearUser={clearUser} user={user} />
+					</RequireAuth>
 					}
 				/>
 				<Route
 					path='/change-password'
 					element={
-						<RequireAuth user={user}>
-							<ChangePassword msgAlert={msgAlert} user={user} />
-						</RequireAuth>}
+					<RequireAuth user={user}>
+						<ChangePassword msgAlert={msgAlert} user={user} />
+					</RequireAuth>}
 				/>
 				<Route
-					path='/pets/:id'
-					element={
-						<ShowPet msgAlert={msgAlert} />}
+					path="/pets/:id"
+					element={ <ShowPet user={ user } msgAlert={ msgAlert } />}
 				/>
-				<Route path='/addPet'
-					element={ <PetForm /> } />
+				<Route
+					path="/addPet"
+					element={
+						<RequireAuth user={ user }>
+							<CreatePet msgAlert={msgAlert} user={user}/>
+						</RequireAuth>  
+					}
+				/>
 			</Routes>
 			{msgAlerts.map((msgAlert) => (
 				<AutoDismissAlert
@@ -91,5 +89,4 @@ const App = () => {
 		</Fragment>
 	)
 }
-
 export default App
